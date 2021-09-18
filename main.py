@@ -1,69 +1,93 @@
-#Conti Challenge-The Maze
+import pygame
+import os
+import mazeSolve
+import guiFunctions
 
-import numpy as np
+pygame.font.init()
 
-def createMaze():
-    maze=[]
-    maze.append([0, 1, 1, 3, 1, 2, 2, 1, 1, 3, 1])
-    maze.append([1, 2, 1, 2, 2, 1, 3, 3, 2, 1, 2])
-    maze.append([1, 2, 1, 1, 3, 1, 2, 1, 3, 1, 1])
-    maze.append([2, 1, 2, 3, 1, 2, 1, 3, 1, 4, 2])
-    maze.append([1, 3, 2, 1, 2, 1, 2, 1, 2, 1, 3])
-    maze.append([1, 3, 1, 1, 1, 3, 3, 1, 3, 1, 3])
-    maze.append([3, 1, 1, 2, 1, 4, 1, 2, 1, 3, 1])
-    maze.append([3, 2, 3, 1, 2, 1, 3, 1, 1, 2, 1])
-    maze.append([1, 1, 1, 1, 2, 1, 1, 3, 2, 1, 3])
-    maze.append([1, 1, 2, 3, 1, 2, 1, 1, 1, 2, 1])
-    maze.append([3, 2, 1, 1, 2, 3, 2, 1, 3, 3, 0])
+MAZE_SOLUTION=mazeSolve.optimalSolution
+THE_MAZE=mazeSolve.theMaze
 
-    return maze
+WIDTH, HEIGHT=900, 700
+WIN=pygame.display.set_mode((WIDTH,HEIGHT))
+BACKGROUNDCOLOR=(240,255,240) #mintcream
 
-def sumCostPathRow(list1,list2):
-    for index in range(1,len(list1)):
-        list1[index]=list1[index-1]+list2[index]
+FPS=60
 
-def sumCostPathCol(list1,list2):
-    for index in range(1,len(list1)):
-        list1[index][0]=list1[index-1][0]+list2[index][0]
+CURRENT_POSITION=(50,150)
+CELL_SIZE=(40,40)
+CELL_DISTANCE_LINE=(35,0)
+CELL_DISTANCE_ROW=(0,35)
 
-def fillToFirstTP(list1, list2):
-    for indexJ in range (1,len(list1)):
-        for indexI in range(1,len(list1)):
-            if list2[indexJ][indexI] !=4:
-                list1[indexJ][indexI]=list2[indexJ][indexI]+min(list1[indexJ-1][indexI],list1[indexJ][indexI-1])
-            else:
-                return (indexJ,indexI)
+BLACK_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','blacksquare.png'))
+WHITE_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','whitesquare.png'))
+GRAY_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','graysquare.png'))
+START_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','startsquare.png'))
+TP_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','tpsquare.png'))
 
-def fillToLastTP(x,list1, list2):
-    for indexJ in range(1,len(list1)):
-        for indexI in range(x,len(list1)):
-            if list2[indexI][indexJ] !=4:
-                list1[indexI][indexJ]=list2[indexI][indexJ]+min(list1[indexI-1][indexJ],list1[indexI][indexJ-1])
-            else:
-                return (indexI,indexJ)
+BLACK_SQUARE_TILE=pygame.transform.scale(BLACK_SQUARE_TILE_IMAGE,CELL_SIZE)
+WHITE_SQUARE_TILE=pygame.transform.scale(WHITE_SQUARE_TILE_IMAGE,CELL_SIZE)
+GRAY_SQUARE_TILE=pygame.transform.scale(GRAY_SQUARE_TILE_IMAGE,CELL_SIZE)
+START_SQUARE_TILE=pygame.transform.scale(START_SQUARE_TILE_IMAGE,CELL_SIZE)
+TP_SQUARE_TILE=pygame.transform.scale(TP_SQUARE_TILE_IMAGE, CELL_SIZE)
 
-def fillTheRest(list1,list2):
-    for indexJ in range (1,len(list1)):
-        for indexI in range(1,len(list1)):
-            if list1[indexJ][indexI]==0:
-                list1[indexJ][indexI]=list2[indexJ][indexI]+min(list1[indexJ-1][indexI],list1[indexJ][indexI-1])
+FONT=pygame.font.SysFont("monospane",40)
 
-    return list1[10][10]
+START_LABEL=FONT.render("S",1,(0,0,0))
+START_LABEL_POSITION=(65, 158)
+FINISH_LABEL=FONT.render("X",1,(0,0,0))
+FINISH_LABEL_POSITION=(462, 560)
 
-def leastCostPath(list1, list2):
-    sumCostPathRow(list1[0], list2[0])
-    sumCostPathCol(list1, list2)
+MAZE_MARGIN_POSITION=(48,148)
+MAZE_MARGIN_SIZE=(444,444)
 
-    (xFirstTp, yFirstTp)=fillToFirstTP(list1, list2)
-    (xSecondTp, ySecondTp)=fillToLastTP(xFirstTp,list1,list2)
-    list1[xFirstTp][yFirstTp]=min(list1[xSecondTp-1][ySecondTp], list1[xSecondTp][ySecondTp-1])
-    list1[xSecondTp][ySecondTp]=min(list1[xFirstTp-1][yFirstTp], list1[xFirstTp][yFirstTp-1])
 
-    mazeSolution=fillTheRest(list1,list2)
-    print(f'The min cost solution is: {int(mazeSolution)}')
+pygame.display.set_caption("The ContiChallenge Maze")
 
-#main
+def drawTiles(maze):
+    global CURRENT_POSITION
+    for indexJ in range(0,len(maze)):
+        for indexI in range(0,len(maze)):
+            #print(CURRENT_POSITION)
+            if maze[indexJ][indexI] == 0:
+                pygame.draw.rect(WIN,(248,248,248),pygame.Rect(CURRENT_POSITION,CELL_SIZE))
+                if indexJ ==0 and indexI==0:
+                    WIN.blit(START_LABEL,START_LABEL_POSITION)
+                elif indexJ==10 and indexI==10:
+                    WIN.blit(FINISH_LABEL, FINISH_LABEL_POSITION)
+            elif maze[indexJ][indexI] == 1:
+               pygame.draw.rect(WIN, (248,248,248), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
+            elif maze[indexJ][indexI] == 2:
+                pygame.draw.rect(WIN, (211,211,211), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
+            elif maze[indexJ][indexI] == 3:
+                pygame.draw.rect(WIN, (40,40,40), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
+            elif maze[indexJ][indexI] == 4:
+                pygame.draw.rect(WIN, (176,224,230), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
 
-theMaze=createMaze()
-minPathCost=list(np.zeros((11,11)))
-leastCostPath(minPathCost, theMaze)
+            if indexI == 10:
+                CURRENT_POSITION= guiFunctions.sumUpTuples(CURRENT_POSITION,(-400,40))
+            else :
+                CURRENT_POSITION = guiFunctions.sumUpTuples(CURRENT_POSITION, (40, 0))
+    CURRENT_POSITION=(50,150)
+
+def drawWindow():
+    WIN.fill(BACKGROUNDCOLOR)
+    pygame.draw.rect(WIN, (40,40,40), pygame.Rect(MAZE_MARGIN_POSITION, MAZE_MARGIN_SIZE))
+    drawTiles(THE_MAZE)
+    pygame.display.update()
+
+
+def main():
+    clock=pygame.time.Clock()
+    run=True
+    while run:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                run=False
+        drawWindow()
+
+    pygame.quit()
+
+if __name__=="__main__":
+    main()
