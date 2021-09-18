@@ -32,6 +32,7 @@ def fillToFirstTP(list1, list2):
             if list2[indexJ][indexI] !=4:
                 list1[indexJ][indexI]=list2[indexJ][indexI]+min(list1[indexJ-1][indexI],list1[indexJ][indexI-1])
             else:
+                tpCoords.append([indexJ,indexI])
                 return (indexJ,indexI)
 
 def fillToLastTP(x,list1, list2):
@@ -40,6 +41,7 @@ def fillToLastTP(x,list1, list2):
             if list2[indexI][indexJ] !=4:
                 list1[indexI][indexJ]=list2[indexI][indexJ]+min(list1[indexI-1][indexJ],list1[indexI][indexJ-1])
             else:
+                tpCoords.append([indexI,indexJ])
                 return (indexI,indexJ)
 
 def fillTheRest(list1,list2):
@@ -64,9 +66,49 @@ def leastCostPath(list1, list2):
 
     fillTheRest(list1, list2)
 
+def checkTeleportTile(list2, indexJ, indexI):
+    global tpCoords
+    if list2[indexJ][indexI] == 4:
+        if indexJ==tpCoords[0][0] and indexI==tpCoords[0][1]:
+            indexJ=tpCoords[1][0]
+            indexI=tpCoords[1][1]
+        elif indexJ==tpCoords[1][0] and indexI==tpCoords[1][1]:
+            indexJ=tpCoords[0][0]
+            indexI=tpCoords[0][1]
+    return (indexJ, indexI)
+
+
+def findPreviousTile(list1, list2, indexJ, indexI):
+    if list1[indexJ-1][indexI] == list1[indexJ][indexI-1]:
+        if list2[indexJ-1][indexI] >= list2[indexJ][indexI-1]:
+            return (indexJ-1, indexI)
+        else:
+            return(indexJ, indexI-1)
+    else:
+        if(list1[indexJ-1][indexI]<list1[indexJ][indexI-1]):
+            return(indexJ-1, indexI)
+        else:
+            return(indexJ, indexI-1)
+
+
+def findPaths(list1, list2):
+    indexJ=10
+    indexI=10
+    pathList=[]
+    while indexJ!=0 or indexI!=0:
+        (indexJ, indexI) = checkTeleportTile(list2, indexJ, indexI)
+        pathList.append([indexJ, indexI])
+        (indexJ,indexI)=findPreviousTile(list1,list2,indexJ, indexI)
+    pathList.append([indexJ, indexI])
+
+    return pathList
+
 #main
 
+tpCoords=[]
 theMaze=createMaze()
 minPathCost=list(np.zeros((11,11)))
 leastCostPath(minPathCost, theMaze)
 optimalSolution=returnSolution(minPathCost)
+mazePath=findPaths(minPathCost,theMaze)
+print(mazePath)
