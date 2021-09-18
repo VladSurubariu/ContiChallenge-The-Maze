@@ -75,12 +75,21 @@ def checkTeleportTile(list2, indexJ, indexI):
         elif indexJ==tpCoords[1][0] and indexI==tpCoords[1][1]:
             indexJ=tpCoords[0][0]
             indexI=tpCoords[0][1]
-    return (indexJ, indexI)
+        return (indexJ, indexI)
+    return False
 
+
+def remindPossiblePath(indexJ, indexI):
+    global pathsCoordinates
+    pathsCoordinates.append([indexJ, indexI])
+    #print(pathsCoordinates)
 
 def findPreviousTile(list1, list2, indexJ, indexI):
     if list1[indexJ-1][indexI] == list1[indexJ][indexI-1]:
-        if list2[indexJ-1][indexI] >= list2[indexJ][indexI-1]:
+        if list2[indexJ - 1][indexI] == list2[indexJ][indexI - 1]:
+            remindPossiblePath(indexJ,indexI-1)
+            return (indexJ - 1, indexI)
+        elif list2[indexJ-1][indexI] > list2[indexJ][indexI-1]:
             return (indexJ-1, indexI)
         else:
             return(indexJ, indexI-1)
@@ -91,13 +100,13 @@ def findPreviousTile(list1, list2, indexJ, indexI):
             return(indexJ, indexI-1)
 
 
-def findPaths(list1, list2):
-    indexJ=10
-    indexI=10
+def findPaths(list1, list2, indexJ, indexI):
     pathList=[]
     while indexJ!=0 or indexI!=0:
-        (indexJ, indexI) = checkTeleportTile(list2, indexJ, indexI)
         pathList.append([indexJ, indexI])
+        if checkTeleportTile(list2, indexJ, indexI):
+            (indexJ,indexI)=checkTeleportTile(list2,indexJ,indexI)
+            pathList.append([indexJ,indexI])
         (indexJ,indexI)=findPreviousTile(list1,list2,indexJ, indexI)
     pathList.append([indexJ, indexI])
 
@@ -106,9 +115,17 @@ def findPaths(list1, list2):
 #main
 
 tpCoords=[]
+pathsCoordinates=[]
+mazePath=[]
 theMaze=createMaze()
+
 minPathCost=list(np.zeros((11,11)))
 leastCostPath(minPathCost, theMaze)
 optimalSolution=returnSolution(minPathCost)
-mazePath=findPaths(minPathCost,theMaze)
+
+mazePath.append(findPaths(minPathCost,theMaze,10,10))
+
+for indexJ in range(0,len(pathsCoordinates)):
+    mazePath.append(findPaths(minPathCost, theMaze, pathsCoordinates[indexJ][0],pathsCoordinates[indexJ][1]))
+
 print(mazePath)
