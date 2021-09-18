@@ -19,30 +19,21 @@ CELL_SIZE=(40,40)
 CELL_DISTANCE_LINE=(35,0)
 CELL_DISTANCE_ROW=(0,35)
 
-BLACK_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','blacksquare.png'))
-WHITE_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','whitesquare.png'))
-GRAY_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','graysquare.png'))
-START_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','startsquare.png'))
-TP_SQUARE_TILE_IMAGE=pygame.image.load(os.path.join('resources','tpsquare.png'))
-
-BLACK_SQUARE_TILE=pygame.transform.scale(BLACK_SQUARE_TILE_IMAGE,CELL_SIZE)
-WHITE_SQUARE_TILE=pygame.transform.scale(WHITE_SQUARE_TILE_IMAGE,CELL_SIZE)
-GRAY_SQUARE_TILE=pygame.transform.scale(GRAY_SQUARE_TILE_IMAGE,CELL_SIZE)
-START_SQUARE_TILE=pygame.transform.scale(START_SQUARE_TILE_IMAGE,CELL_SIZE)
-TP_SQUARE_TILE=pygame.transform.scale(TP_SQUARE_TILE_IMAGE, CELL_SIZE)
-
-FONT=pygame.font.SysFont("monospane",40)
+FONT=pygame.font.Font('fonts/Gasalt-Black.ttf',40)
+TITLE_FONT=pygame.font.Font("fonts/Gamy.otf", 50)
 
 START_LABEL=FONT.render("S",1,(0,0,0))
-START_LABEL_POSITION=(63, 158)
+START_LABEL_POSITION=(63, 153)
 FINISH_LABEL=FONT.render("X",1,(0,0,0))
-FINISH_LABEL_POSITION=(462, 560)
+FINISH_LABEL_POSITION=(462, 555)
 
 MAZE_MARGIN_POSITION=(48,148)
 MAZE_MARGIN_SIZE=(444,444)
 
+TITLE_LABEL_POSITION=(280,50)
+TITLE_LABEL=TITLE_FONT.render("The Conti Maze", 1, (0,0,0))
 
-pygame.display.set_caption("The ContiChallenge Maze")
+pygame.display.set_caption("The Conti Maze")
 
 def drawTiles(maze):
     global CURRENT_POSITION
@@ -72,6 +63,7 @@ def drawTiles(maze):
 
 def drawWindow():
     WIN.fill(BACKGROUNDCOLOR)
+    WIN.blit(TITLE_LABEL, TITLE_LABEL_POSITION)
     pygame.draw.rect(WIN, (40,40,40), pygame.Rect(MAZE_MARGIN_POSITION, MAZE_MARGIN_SIZE))
     drawTiles(THE_MAZE)
     pygame.display.update()
