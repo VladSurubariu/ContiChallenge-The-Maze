@@ -54,7 +54,6 @@ def fillToFirstTP(list1, list2):
                 list1[indexJ][indexI]=list2[indexJ][indexI]+min(list1[indexJ-1][indexI],list1[indexJ][indexI-1])
             else: #if its a teleporter the coordinates are stored in a list
                 tpCoords.append([indexJ,indexI])
-                print(indexJ, indexI)
                 list1[indexJ][indexI]=1000
                 return (indexJ,indexI) #the coordinates of the teleporter are returned
 
@@ -66,7 +65,6 @@ def fillToLastTP(x,list1, list2,tpCoords):
             if list1[indexJ][indexI] == 0:
                 if list2[indexJ][indexI]==4:
                     tpCoords.append([indexJ, indexI])
-                    print(indexJ, indexI)
                     return (indexJ, indexI)
                 else:
                     list1[indexJ][indexI] = list2[indexJ][indexI] + min(list1[indexJ - 1][indexI], list1[indexJ][indexI - 1])
@@ -97,7 +95,6 @@ def leastCostPath(list1, list2):
     #for ex is the min cost path to the first tp is 12, when the first tp is used, the value of the 2nd teleport will be 12
     list1[xFirstTp][yFirstTp]=min(list1[xSecondTp-1][ySecondTp], list1[xSecondTp][ySecondTp-1])
     list1[xSecondTp][ySecondTp]=min(list1[xFirstTp-1][yFirstTp], list1[xFirstTp][yFirstTp-1])
-    print(list1[xFirstTp][yFirstTp],list1[xSecondTp][ySecondTp])
 
     fillTheRest(list1, list2)
 
@@ -122,8 +119,8 @@ def remindPossiblePath(indexJ, indexI):
 #the function is used to find the previous tile of the path after calculating the value of the min cost path
 def findPreviousTile(list1, list2, indexJ, indexI):
     if list1[indexJ-1][indexI] == list1[indexJ][indexI-1]: #if the value of the tile to the left and the one above are equal
+        remindPossiblePath(indexJ, indexI - 1)  # it means there is another possible path
         if list2[indexJ - 1][indexI] == list2[indexJ][indexI - 1]: #the penalty points of the tiles are tested and, if they are equal
-            remindPossiblePath(indexJ,indexI-1) #it means there is another possible path
             return (indexJ - 1, indexI)
         elif list2[indexJ-1][indexI] > list2[indexJ][indexI-1]: #if the value of the penalty points of the above tile are greater
             return (indexJ-1, indexI) #return the coordinates of the above tile
@@ -164,3 +161,5 @@ mazePath.append(findPaths(minPathCost,theMaze,10,10)) #the first path is calcula
 for indexJ in range(0,len(pathsCoordinates)): #for every list of coordinates in pathsCoordinates
     mazePath.append(findPaths(minPathCost, theMaze, pathsCoordinates[indexJ][0],pathsCoordinates[indexJ][1])) #the other possible paths
     #are stored
+
+print(minPathCost)
