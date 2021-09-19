@@ -4,20 +4,26 @@ import mazeSolve
 import guiFunctions
 
 pygame.font.init()
-
 MAZE_SOLUTION=mazeSolve.optimalSolution
 THE_MAZE=mazeSolve.theMaze
+THE_PATHS_LIST=mazeSolve.mazePath
 
 WIDTH, HEIGHT=900, 700
 WIN=pygame.display.set_mode((WIDTH,HEIGHT))
+
+#Colors
 BACKGROUNDCOLOR=(240,255,240) #mintcream
+BLACK=(0,0,0)
+WHITE_SMOKE=(248,248,248)
+LIGHT_GRAY=(211,211,211)
+NERO_BLACK=(40,40,40)
+POWDER_BLUE=(176,224,230)
+KELLY_GREEN=(76, 187, 23)
 
 FPS=60
 
-CURRENT_POSITION=(50,150)
+current_position=(50,150)
 CELL_SIZE=(40,40)
-CELL_DISTANCE_LINE=(35,0)
-CELL_DISTANCE_ROW=(0,35)
 
 FONT=pygame.font.Font('fonts/Gasalt-Black.ttf',40)
 TITLE_FONT=pygame.font.Font("fonts/Gamy.otf", 50)
@@ -30,42 +36,73 @@ FINISH_LABEL_POSITION=(462, 555)
 MAZE_MARGIN_POSITION=(48,148)
 MAZE_MARGIN_SIZE=(444,444)
 
+PATH_SIZE_VERT=(10,20)
+PATH_SIZE_HORIZ=(20,10)
+PATH_SIZE_BRANCH=(10,10)
+
 TITLE_LABEL_POSITION=(280,50)
-TITLE_LABEL=TITLE_FONT.render("The Conti Maze", 1, (0,0,0))
+TITLE_LABEL=TITLE_FONT.render("The Conti Maze", 1, BLACK)
 
 pygame.display.set_caption("The Conti Maze")
 
+def decideOrientationPrevious(pathsList, indexJ, indexI):
+    #print(pathsList[indexJ][indexI],indexJ, indexI)
+    if pathsList[indexJ][indexI]==[0,0] or pathsList[indexJ][indexI]==[10,10]:
+        return False
+    elif pathsList[indexJ][indexI][0] < pathsList[indexJ][indexI-1][0]:
+        return 1
+    elif pathsList[indexJ][indexI][0] == pathsList[indexJ][indexI-1][0]:
+        return 2
+
+def drawPaths(pathsList):
+    current_position=(65,160)
+    for indexJ in range(0,len(pathsList)):
+        for indexI in range(0, len(pathsList[indexJ])):
+            y,x=pathsList[indexJ][indexI]
+            pathTileCoordinates=(x*40+current_position[0],y*40+current_position[1])
+            orientation=decideOrientationPrevious(pathsList, indexJ, indexI)
+            if orientation == 1 :
+                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_VERT))
+            elif orientation == 2:
+                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ))
+            elif orientation == None:
+                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_BRANCH))
+
+
+
 def drawTiles(maze):
-    global CURRENT_POSITION
+    global current_position
     for indexJ in range(0,len(maze)):
         for indexI in range(0,len(maze)):
-            #print(CURRENT_POSITION)
+            #print(current_position)
             if maze[indexJ][indexI] == 0:
-                pygame.draw.rect(WIN,(248,248,248),pygame.Rect(CURRENT_POSITION,CELL_SIZE))
+                pygame.draw.rect(WIN,WHITE_SMOKE,pygame.Rect(current_position,CELL_SIZE))
                 if indexJ ==0 and indexI==0:
                     WIN.blit(START_LABEL,START_LABEL_POSITION)
                 elif indexJ==10 and indexI==10:
                     WIN.blit(FINISH_LABEL, FINISH_LABEL_POSITION)
             elif maze[indexJ][indexI] == 1:
-               pygame.draw.rect(WIN, (248,248,248), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
+               pygame.draw.rect(WIN, WHITE_SMOKE, pygame.Rect(current_position, CELL_SIZE))
             elif maze[indexJ][indexI] == 2:
-                pygame.draw.rect(WIN, (211,211,211), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
+                pygame.draw.rect(WIN, LIGHT_GRAY, pygame.Rect(current_position, CELL_SIZE))
             elif maze[indexJ][indexI] == 3:
-                pygame.draw.rect(WIN, (40,40,40), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
+                pygame.draw.rect(WIN, NERO_BLACK, pygame.Rect(current_position, CELL_SIZE))
             elif maze[indexJ][indexI] == 4:
-                pygame.draw.rect(WIN, (176,224,230), pygame.Rect(CURRENT_POSITION, CELL_SIZE))
+                pygame.draw.rect(WIN, POWDER_BLUE, pygame.Rect(current_position, CELL_SIZE))
 
             if indexI == 10:
-                CURRENT_POSITION= guiFunctions.sumUpTuples(CURRENT_POSITION,(-400,40))
+                current_position= guiFunctions.sumUpTuples(current_position,(-400,40))
             else :
-                CURRENT_POSITION = guiFunctions.sumUpTuples(CURRENT_POSITION, (40, 0))
-    CURRENT_POSITION=(50,150)
+                current_position = guiFunctions.sumUpTuples(current_position, (40, 0))
+    current_position=(50,150)
+
 
 def drawWindow():
     WIN.fill(BACKGROUNDCOLOR)
     WIN.blit(TITLE_LABEL, TITLE_LABEL_POSITION)
     pygame.draw.rect(WIN, (40,40,40), pygame.Rect(MAZE_MARGIN_POSITION, MAZE_MARGIN_SIZE))
     drawTiles(THE_MAZE)
+    drawPaths(THE_PATHS_LIST)
     pygame.display.update()
 
 

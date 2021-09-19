@@ -128,4 +128,4 @@ mazePath.append(findPaths(minPathCost,theMaze,10,10))
 for indexJ in range(0,len(pathsCoordinates)):
     mazePath.append(findPaths(minPathCost, theMaze, pathsCoordinates[indexJ][0],pathsCoordinates[indexJ][1]))
 
-print(mazePath)
+#print(mazePath)
