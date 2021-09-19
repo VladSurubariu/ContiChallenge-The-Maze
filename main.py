@@ -61,7 +61,7 @@ def drawPaths(pathsList):
     global animationsTimeCounter
     animationsTimeCounter+=1
     for indexJ in range(0,len(pathsList)):
-        for indexI in range(0, len(pathsList[indexJ])):
+        for indexI in range(len(pathsList[indexJ])-1,-1,-1):
             if animationsTimeCounter==1:
                 pygame.time.delay(200)
                 pygame.display.update()
