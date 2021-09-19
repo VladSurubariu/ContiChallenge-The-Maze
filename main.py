@@ -28,10 +28,20 @@ CELL_SIZE=(40,40)
 FONT=pygame.font.Font('fonts/Gasalt-Black.ttf',40)
 TITLE_FONT=pygame.font.Font("fonts/Gamy.otf", 50)
 
-START_LABEL=FONT.render("S",1,(0,0,0))
+START_LABEL=FONT.render("S",1,BLACK)
 START_LABEL_POSITION=(63, 153)
-FINISH_LABEL=FONT.render("X",1,(0,0,0))
+FINISH_LABEL=FONT.render("X",1,BLACK)
 FINISH_LABEL_POSITION=(462, 555)
+
+SCORE_LABEL=FONT.render("Calculating Score...",1,BLACK)
+SCORE_LABEL_POSITION=(550, 300)
+SCORE_LABEL_SIZE=(300,100)
+
+score=str(int(mazeSolve.minPathCost[10][10]))
+score="The score is: "+score
+UPDATED_SCORE=FONT.render(score, 1, BLACK)
+UPDATED_SCORE_POSITION=(550,300)
+UPDATED_SCORE_SIZE=(300,100)
 
 MAZE_MARGIN_POSITION=(48,148)
 MAZE_MARGIN_SIZE=(444,444)
@@ -104,16 +114,22 @@ def drawTiles(maze):
                 current_position = guiFunctions.sumUpTuples(current_position, (40, 0))
     current_position=(50,150)
 
+def updateScore():
+    pygame.draw.rect(WIN, BACKGROUNDCOLOR, pygame.Rect(SCORE_LABEL_POSITION, SCORE_LABEL_SIZE))
+    WIN.blit(UPDATED_SCORE, UPDATED_SCORE_POSITION)
+
 
 def drawWindow():
     global animationsTimeCounter
     WIN.fill(BACKGROUNDCOLOR)
     WIN.blit(TITLE_LABEL, TITLE_LABEL_POSITION)
+    WIN.blit(SCORE_LABEL, SCORE_LABEL_POSITION)
     pygame.draw.rect(WIN, (40,40,40), pygame.Rect(MAZE_MARGIN_POSITION, MAZE_MARGIN_SIZE))
     drawTiles(THE_MAZE)
     if animationsTimeCounter == 1:
         pygame.display.update()
     drawPaths(THE_PATHS_LIST)
+    updateScore()
     pygame.display.update()
 
 def main():
