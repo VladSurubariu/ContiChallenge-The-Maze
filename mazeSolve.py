@@ -19,6 +19,22 @@ def createMaze():
 
     return maze
 
+def createMaze2():
+    maze=[]
+    maze.append([0,3,1,1,2,3,1,2,3,2,1])
+    maze.append([2,2,1,3,1,1,2,2,3,1,2])
+    maze.append([3,1,1,2,3,1,1,1,1,3,1])
+    maze.append([1,3,4,1,1,2,3,3,1,3,1])
+    maze.append([2,1,3,2,2,1,2,1,3,1,3])
+    maze.append([3,1,1,3,2,2,3,1,3,4,3])
+    maze.append([2,1,3,2,2,1,3,1,2,1,3])
+    maze.append([3,1,3,2,2,1,3,1,3,2,2])
+    maze.append([2,1,1,3,1,2,3,1,2,1,2])
+    maze.append([3,2,1,3,2,2,1,2,3,3,1])
+    maze.append([2,3,1,3,1,2,1,3,2,1,0])
+
+    return maze
+
 #the function sums the minimum cost path for the first row
 def sumCostPathRow(list1,list2):
     for index in range(1,len(list1)):
@@ -38,18 +54,23 @@ def fillToFirstTP(list1, list2):
                 list1[indexJ][indexI]=list2[indexJ][indexI]+min(list1[indexJ-1][indexI],list1[indexJ][indexI-1])
             else: #if its a teleporter the coordinates are stored in a list
                 tpCoords.append([indexJ,indexI])
+                print(indexJ, indexI)
+                list1[indexJ][indexI]=1000
                 return (indexJ,indexI) #the coordinates of the teleporter are returned
 
 #the function calculates the min path cost of every maze point until it reaches the second teleport point
 #the function goes to every row in every column of the lists
-def fillToLastTP(x,list1, list2):
-    for indexJ in range(1,len(list1)):
-        for indexI in range(x,len(list1)):
-            if list2[indexI][indexJ] !=4: #if the value of the current tile is not 4 it means its not a teleported tile
-                list1[indexI][indexJ]=list2[indexI][indexJ]+min(list1[indexI-1][indexJ],list1[indexI][indexJ-1])
-            else: #if its a teleporter tile the coordinates are stored in a list
-                tpCoords.append([indexI,indexJ])
-                return (indexI,indexJ) #the coordinates of the teleporter are returned
+def fillToLastTP(x,list1, list2,tpCoords):
+    for indexJ in range(x,len(list1)):
+        for indexI in range(1,len(list1)):
+            if list1[indexJ][indexI] == 0:
+                if list2[indexJ][indexI]==4:
+                    tpCoords.append([indexJ, indexI])
+                    print(indexJ, indexI)
+                    return (indexJ, indexI)
+                else:
+                    list1[indexJ][indexI] = list2[indexJ][indexI] + min(list1[indexJ - 1][indexI], list1[indexJ][indexI - 1])
+
 
 #the function is used to calculate the min path cost to every other points after the tp's are found
 #the function goes to every column in every row of the lists
@@ -70,12 +91,13 @@ def leastCostPath(list1, list2):
     sumCostPathCol(list1, list2)
 
     (xFirstTp, yFirstTp)=fillToFirstTP(list1, list2) #the coordinates of the first tp are stored
-    (xSecondTp, ySecondTp)=fillToLastTP(xFirstTp,list1,list2) #the coordinates of the second tp are stored
+    (xSecondTp, ySecondTp)=fillToLastTP(xFirstTp,list1,list2,tpCoords) #the coordinates of the second tp are stored
 
     #the value of the tp's will be the minimum cost of the path to the other tp tile
     #for ex is the min cost path to the first tp is 12, when the first tp is used, the value of the 2nd teleport will be 12
     list1[xFirstTp][yFirstTp]=min(list1[xSecondTp-1][ySecondTp], list1[xSecondTp][ySecondTp-1])
     list1[xSecondTp][ySecondTp]=min(list1[xFirstTp-1][yFirstTp], list1[xFirstTp][yFirstTp-1])
+    print(list1[xFirstTp][yFirstTp],list1[xSecondTp][ySecondTp])
 
     fillTheRest(list1, list2)
 
