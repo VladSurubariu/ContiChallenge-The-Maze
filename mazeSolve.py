@@ -59,15 +59,15 @@ def fillToFirstTP(list1, list2):
 
 #the function calculates the min path cost of every maze point until it reaches the second teleport point
 #the function goes to every row in every column of the lists
-def fillToLastTP(x,list1, list2,tpCoords):
-    for indexJ in range(x,len(list1)):
-        for indexI in range(1,len(list1)):
-            if list1[indexJ][indexI] == 0:
+def fillToLastTP(x,copyOfList1, list2,tpCoords):
+    for indexJ in range(x,len(copyOfList1)):
+        for indexI in range(1,len(copyOfList1)):
+            if copyOfList1[indexJ][indexI] == 0:
                 if list2[indexJ][indexI]==4:
                     tpCoords.append([indexJ, indexI])
                     return (indexJ, indexI)
                 else:
-                    list1[indexJ][indexI] = list2[indexJ][indexI] + min(list1[indexJ - 1][indexI], list1[indexJ][indexI - 1])
+                    copyOfList1[indexJ][indexI] = list2[indexJ][indexI] + min(copyOfList1[indexJ - 1][indexI], copyOfList1[indexJ][indexI - 1])
 
 
 #the function is used to calculate the min path cost to every other points after the tp's are found
@@ -89,13 +89,17 @@ def leastCostPath(list1, list2):
     sumCostPathCol(list1, list2)
 
     (xFirstTp, yFirstTp)=fillToFirstTP(list1, list2) #the coordinates of the first tp are stored
-    (xSecondTp, ySecondTp)=fillToLastTP(xFirstTp,list1,list2,tpCoords) #the coordinates of the second tp are stored
+    copyOfList1 = [[list1[x][y] for y in range(len(list1[0]))] for x in range(len(list1))]
+    (xSecondTp, ySecondTp)=fillToLastTP(xFirstTp,copyOfList1,list2,tpCoords) #the coordinates of the second tp are stored
 
     #the value of the tp's will be the minimum cost of the path to the other tp tile
     #for ex is the min cost path to the first tp is 12, when the first tp is used, the value of the 2nd teleport will be 12
-    list1[xFirstTp][yFirstTp]=min(list1[xSecondTp-1][ySecondTp], list1[xSecondTp][ySecondTp-1])
-    list1[xSecondTp][ySecondTp]=min(list1[xFirstTp-1][yFirstTp], list1[xFirstTp][yFirstTp-1])
+    list1[xFirstTp][yFirstTp]=min(copyOfList1[xSecondTp-1][ySecondTp], copyOfList1[xSecondTp][ySecondTp-1])
+    list1[xSecondTp][ySecondTp]=min(copyOfList1[xFirstTp-1][yFirstTp], copyOfList1[xFirstTp][yFirstTp-1])
+    print(list1[xFirstTp][yFirstTp],list1[xSecondTp][ySecondTp])
 
+    fillToLastTP(xFirstTp,list1,list2,tpCoords)
+    print(list1)
     fillTheRest(list1, list2)
 
 #the function is called to check if the path uses the a teleport tile
