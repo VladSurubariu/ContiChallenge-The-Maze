@@ -34,9 +34,9 @@ START_LABEL_POSITION=(63, 153) #initialising the S tile position
 FINISH_LABEL=FONT.render("X",1,BLACK) #initialising the F tile font
 FINISH_LABEL_POSITION=(462, 555) #initialising the S tile position
 
-SCORE_LABEL=FONT.render("Calculating Score...",1,BLACK) #initialising the "Calculating score" label
+SCORE_LABEL=FONT.render("Searching for paths...",1,BLACK) #initialising the "Searching for paths" label
 SCORE_LABEL_POSITION=(550, 300) #initialising the position
-SCORE_LABEL_SIZE=(300,100) #initialising the square that will cover the "Calculating score" label
+SCORE_LABEL_SIZE=(300,100) #initialising the square that will cover the "Searching for paths" label
 
 score=str(int(mazeSolve.minPathCost[10][10])) #initialising the score string
 score="The score is: "+score #initialising the score label
@@ -66,8 +66,21 @@ def decideOrientationPrevious(pathsList, indexJ, indexI):
     elif pathsList[indexJ][indexI][0] == pathsList[indexJ][indexI-1][0]: #if the path goes horizontal
         return 2
 
+def searchForOrientation(maze,indexJ,indexI,pathTileCoordinates,pathsList):
+    element=pathsList[indexJ][indexI]
+    for list in maze:
+        for listElement in list:
+            if element[0]==listElement[0]-1 and element[1]==listElement[1]:
+                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_VERT))  # the path tile is drawn vertically
+            #if element[0]==listElement[0]+1 and element[1]==listElement[1]:
+                #pygame.draw.rect(WIN, KELLY_GREEN,pygame.Rect(pathTileCoordinates, PATH_SIZE_VERT))  # the path tile is drawn vertically
+            if element[0]==listElement[0] and element[1]==listElement[1]-1:
+                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ))  # the path tile is drawn horizontally
+            if element[0]==listElement[0] and element[1]==listElement[1]+1:
+                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ))  # the path tile is drawn horizontally
+
 #the function draws the most optimal path/paths
-def drawPaths(pathsList):
+def drawPaths(maze, pathsList):
     current_position=(65,160) #this is the place where the path is starting from
     global animationsTimeCounter
     animationsTimeCounter+=1 #after every call of the function the animationTimeCounter will increase
@@ -84,10 +97,10 @@ def drawPaths(pathsList):
             elif orientation == 2: #if the previous pathpoint was to the left of the current pathpoint
                 pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ)) #the path tile is drawn horizontally
             elif orientation == None: #if there are no previous pathpoint it means that this is an alternate route
-                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_BRANCH)) #the path tile is drawn as a square
+                searchForOrientation(maze, indexJ, indexI, pathTileCoordinates, pathsList)
 
 #the function colors the tile depending on the value of the penalty points the tile has
-def decideTileColor(maze, indexJ, indexI, currentPosition):
+def decideTileType(maze, indexJ, indexI, currentPosition):
     if maze[indexJ][indexI] == 0: #if the penalty point has value 0 it means its the start or the finish point
         pygame.draw.rect(WIN, WHITE_SMOKE, pygame.Rect(current_position, CELL_SIZE)) #a white tile is drawn
         if indexJ == 0 and indexI == 0: #the start tile is drawn
@@ -108,7 +121,7 @@ def drawTiles(maze):
     global current_position
     for indexJ in range(0,len(maze)):
         for indexI in range(0,len(maze)):
-            decideTileColor(maze,indexJ,indexI,current_position) #deciding and coloring the maze tiles
+            decideTileType(maze,indexJ,indexI,current_position) #deciding and coloring the maze tiles
             if indexI == 10: #at the end of every row the tiles will continue to be drawn from the beginning of the next row
                 current_position= guiFunctions.sumUpTuples(current_position,(-400,40))
             else : #else the currentposition is going to the right
@@ -125,12 +138,12 @@ def drawWindow():
     global animationsTimeCounter
     WIN.fill(BACKGROUNDCOLOR) #coloring the background
     WIN.blit(TITLE_LABEL, TITLE_LABEL_POSITION) #drawing the label
-    WIN.blit(SCORE_LABEL, SCORE_LABEL_POSITION) #drawing the "Calculating score label..."
+    WIN.blit(SCORE_LABEL, SCORE_LABEL_POSITION) #drawing the "Searching for paths..." label
     pygame.draw.rect(WIN, (40,40,40), pygame.Rect(MAZE_MARGIN_POSITION, MAZE_MARGIN_SIZE)) #drawing the margin of the maze
     drawTiles(THE_MAZE) #drawing the tiles
     if animationsTimeCounter == 1: #if the animation took place the window is refreshed
         pygame.display.update()
-    drawPaths(THE_PATHS_LIST) #the paths are drawn
+    drawPaths(mazeSolve.mazePath,THE_PATHS_LIST) #the paths are drawn
     updateScore() #the score is updated
     pygame.display.update() #the window is updated again in order to include the last window elements
 
