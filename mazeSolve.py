@@ -54,33 +54,60 @@ def createMaze3():
 def createMaze4():
     maze=[]
     maze.append([0, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    maze.append([4, 1, 1, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0])
 
+    return maze
+
+def createMaze5():
+    maze=[]
+    maze.append([0, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 4, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
+    maze.append([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0])
+
+    return maze
 
 #the function sums the minimum cost path for the first row
 def sumCostPathRow(list1,list2):
     global tpCoords
-    for index in range(1,len(list1)):
-        if(list2[index]==4):
-            tpCoords.append([0,index])
+    for index in range(1,len(list1)): #for every element in the first row
+        if(list2[index]==4):  #if the element is a teleporter
+            tpCoords.append([0,index]) #it's coordinates are stored
             return
-        else:
-            list1[index]=list1[index-1]+list2[index]
+        else: #else
+            list1[index]=list1[index-1]+list2[index] # the minimum path cost is calculated for every other element in the row
 
 #the function sums the minimum cost path for the column
 def sumCostPathCol(list1,list2):
     global tpCoords
-    for index in range(1,len(list1)):
-        if (list2[index][0] == 4):
-            tpCoords.append([index,0])
+    for index in range(1,len(list1)): #for every element in the column
+        if (list2[index][0] == 4): #if the element is a teleporter
+            tpCoords.append([index,0]) #it's coordinates are stored
             return
-        else:
-            list1[index][0]=list1[index-1][0]+list2[index][0]
+        else: #else
+            list1[index][0]=list1[index-1][0]+list2[index][0] #the minimum path cost is calculated for every other element in the column
 
 #the function calculates the min path cost of every maze point until it reaches the first teleport point
 #the function goes to every element of every list contained by minPathCost
 def fillToFirstTP(list1, list2):
-    for indexJ in range (1,len(list1)):
-        for indexI in range(1,len(list1)):
+    for indexJ in range (1,len(list1)): #for every list in the list-variable
+        for indexI in range(1,len(list1)): #for every element in the list
             if list2[indexJ][indexI] !=4: #if the value of the tile is not 4 it means its not a teleporter tile
                 list1[indexJ][indexI]=list2[indexJ][indexI]+min(list1[indexJ-1][indexI],list1[indexJ][indexI-1])
             else: #if its a teleporter the coordinates are stored in a list
@@ -110,7 +137,7 @@ def fillToLastTP(x,copyOfList1, list2,tpCoords):
 def fillTheRest(list1,list2):
     for indexJ in range (0,len(list1)):
         for indexI in range(0,len(list1)):
-            if list1[indexJ][indexI]==0: #if a value hasn't been previously assigned to the tile the default rule is applied
+            if list1[indexJ][indexI]==0 and list2[indexJ][indexI]!=4: #if a value hasn't been previously assigned to the tile the default rule is applied
                 if indexJ == 0 and indexI == 0:
                     pass
                 else:
@@ -164,7 +191,6 @@ def leastCostPath(list1, list2):
         list1[xFirstTp][yFirstTp]=copyOfList1[xSecondTp][ySecondTp-1]
     elif ySecondTp==0:
         list1[xFirstTp][yFirstTp]=copyOfList1[xSecondTp-1][ySecondTp-1]
-
 
     fillToLastTP(xFirstTp,list1,list2,tpCoords)
     fillTheRest(list1, list2)
@@ -223,7 +249,7 @@ def findPaths(list1, list2, indexJ, indexI):
 tpCoords=[]
 pathsCoordinates=[]
 mazePath=[]
-theMaze=createMaze3()
+theMaze=createMaze4()
 minPathCost=list(np.zeros((11,11)))
 
 leastCostPath(minPathCost, theMaze) #the value of the least cost path is calculated
@@ -237,6 +263,5 @@ for element in pathsCoordinates:
     x,y=element[0],element[1]
     mazePath.append(findPaths(minPathCost, theMaze, x,y))
 
-print(minPathCost)
-print(mazePath)
+
 
