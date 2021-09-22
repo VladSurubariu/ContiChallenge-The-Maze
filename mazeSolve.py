@@ -258,6 +258,7 @@ def findPaths(list1, list2, indexJ, indexI):
     return pathList
 
 #main
+#this is where the calling of the functions starts
 
 tpCoords=[] #this is where the coordinates of the tps will be stored
 pathsCoordinates=[] #this is where the coordinates of the alternate paths will be stored
