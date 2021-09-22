@@ -57,26 +57,43 @@ animationsTimeCounter=0 #counts the number of times when the path animation took
 
 pygame.display.set_caption("The Conti Maze") #modifying the window caption
 
-# the function returns a value depeding on the previous path point's coordinates
-def decideOrientationPrevious(pathsList, indexJ, indexI):
-    if pathsList[indexJ][indexI]==[0,0] or pathsList[indexJ][indexI]==[10,10]: #if its the Start or the Finish of the path
-        return False
-    elif pathsList[indexJ][indexI][0] < pathsList[indexJ][indexI-1][0]: #if the path goes vertical
-        return 1
-    elif pathsList[indexJ][indexI][0] == pathsList[indexJ][indexI-1][0]: #if the path goes horizontal
-        return 2
+#the function is drawing the tiles of the path according to the orientation of the path
+def drawAccordingToOrientation(maze, orientation,pathTileCoordinates,indexJ, indexI, pathsList):
+    if orientation == 1:  # if the previous pathpoint was above the current pathpoint
+        pygame.draw.rect(WIN, KELLY_GREEN,
+                         pygame.Rect(pathTileCoordinates, PATH_SIZE_VERT))  # the path tile is drawn vertically
+    elif orientation == 2:  # if the previous pathpoint was to the left of the current pathpoint
+        pygame.draw.rect(WIN, KELLY_GREEN,
+                         pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ))  # the path tile is drawn horizontally
+    elif orientation == None:  # if there are no previous pathpoint it means that this is an alternate route
+        searchForOrientation(maze, indexJ, indexI, pathTileCoordinates, pathsList)
 
+# the function returns a value depeding on the previous path point's coordinates
+def decideOrientationPrevious(maze, pathsList, indexJ, indexI,current_position):
+    if pathsList[indexJ][indexI]==[0,0] or pathsList[indexJ][indexI]==[10,10]: #if its the Start or the Finish of the path
+        orientation=False
+    elif pathsList[indexJ][indexI][0] < pathsList[indexJ][indexI-1][0]: #if the path goes vertical
+        orientation=1
+    elif pathsList[indexJ][indexI][0] == pathsList[indexJ][indexI-1][0]: #if the path goes horizontal
+        orientation=2
+    else: #if there can't be estabilished an orientation
+        orientation=None
+    y, x = pathsList[indexJ][indexI]  # y and x take the pathpoint coordinates
+    pathTileCoordinates = (x * 40 + current_position[0], y * 40 + current_position[1]) #the starting point of the drawing
+    drawAccordingToOrientation(maze,orientation,pathTileCoordinates,indexJ,indexI, pathsList) #the drawing accordint to path orientation
+
+#the function is searching for the path's orientation before drawing it
 def searchForOrientation(maze,indexJ,indexI,pathTileCoordinates,pathsList):
-    element=pathsList[indexJ][indexI]
+    element=pathsList[indexJ][indexI] #the tuple were the coordinates of the path are stored
     for list in maze:
         for listElement in list:
-            if element[0]==listElement[0]-1 and element[1]==listElement[1]:
+            if element[0]==listElement[0]-1 and element[1]==listElement[1]: #if the previous path element was above
                 pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_VERT))  # the path tile is drawn vertically
-            #if element[0]==listElement[0]+1 and element[1]==listElement[1]:
+            #if element[0]==listElement[0]+1 and element[1]==listElement[1]: #if the previous path element was below
                 #pygame.draw.rect(WIN, KELLY_GREEN,pygame.Rect(pathTileCoordinates, PATH_SIZE_VERT))  # the path tile is drawn vertically
-            if element[0]==listElement[0] and element[1]==listElement[1]-1:
+            if element[0]==listElement[0] and element[1]==listElement[1]-1: #if the previous path element was to the left
                 pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ))  # the path tile is drawn horizontally
-            if element[0]==listElement[0] and element[1]==listElement[1]+1:
+            if element[0]==listElement[0] and element[1]==listElement[1]+1: #if the previous path elemnet was to the right
                 pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ))  # the path tile is drawn horizontally
 
 #the function draws the most optimal path/paths
@@ -89,15 +106,9 @@ def drawPaths(maze, pathsList):
             if animationsTimeCounter==1: #if its the first time the function is called, the animations takes place
                 pygame.time.delay(200) #the delay function is called in order to give the impression of an animation
                 pygame.display.update() #the windows is updated
-            y,x=pathsList[indexJ][indexI] #y and x take the pathpoint coordinates
-            pathTileCoordinates=(x*40+current_position[0],y*40+current_position[1]) #updating the current coordinates of the pathpoint
-            orientation=decideOrientationPrevious(pathsList, indexJ, indexI)
-            if orientation == 1 : #if the previous pathpoint was above the current pathpoint
-                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_VERT)) #the path tile is drawn vertically
-            elif orientation == 2: #if the previous pathpoint was to the left of the current pathpoint
-                pygame.draw.rect(WIN, KELLY_GREEN, pygame.Rect(pathTileCoordinates, PATH_SIZE_HORIZ)) #the path tile is drawn horizontally
-            elif orientation == None: #if there are no previous pathpoint it means that this is an alternate route
-                searchForOrientation(maze, indexJ, indexI, pathTileCoordinates, pathsList)
+
+             #updating the current coordinates of the pathpoint
+            decideOrientationPrevious(maze, pathsList, indexJ, indexI,current_position)
 
 #the function colors the tile depending on the value of the penalty points the tile has
 def decideTileType(maze, indexJ, indexI, currentPosition):
