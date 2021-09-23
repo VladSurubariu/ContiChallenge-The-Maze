@@ -1,87 +1,9 @@
 #Conti Challenge-The Maze
 
 import numpy as np
+import mazesData
 
 #initialising the a list of lists that contains the value of the penalty points and the values for the starting/ending points
-def createMaze():
-    maze=[]
-    maze.append([0, 1, 1, 3, 1, 2, 2, 1, 1, 3, 1])
-    maze.append([1, 2, 1, 2, 2, 1, 3, 3, 2, 1, 2])
-    maze.append([1, 2, 1, 1, 3, 1, 2, 1, 3, 1, 1])
-    maze.append([2, 1, 2, 3, 1, 2, 1, 3, 1, 4, 2])
-    maze.append([1, 3, 2, 1, 2, 1, 2, 1, 2, 1, 3])
-    maze.append([1, 3, 1, 1, 1, 3, 3, 1, 3, 1, 3])
-    maze.append([3, 1, 1, 2, 1, 4, 1, 2, 1, 3, 1])
-    maze.append([3, 2, 3, 1, 2, 1, 3, 1, 1, 2, 1])
-    maze.append([1, 1, 1, 1, 2, 1, 1, 3, 2, 1, 3])
-    maze.append([1, 1, 2, 3, 1, 2, 1, 1, 1, 2, 1])
-    maze.append([3, 2, 1, 1, 2, 3, 2, 1, 3, 3, 0])
-
-    return maze
-
-def createMaze2():
-    maze=[]
-    maze.append([0,3,1,1,2,3,1,2,3,2,1])
-    maze.append([2,2,1,3,1,1,2,2,3,1,2])
-    maze.append([3,1,1,2,3,1,1,1,1,3,1])
-    maze.append([1,3,4,1,1,2,3,3,1,3,1])
-    maze.append([2,1,3,2,2,1,2,1,3,1,3])
-    maze.append([3,1,1,3,2,2,3,1,3,4,3])
-    maze.append([2,1,3,2,2,1,3,1,2,1,3])
-    maze.append([3,1,3,2,2,1,3,1,3,2,2])
-    maze.append([2,1,1,3,1,2,3,1,2,1,2])
-    maze.append([3,2,1,3,2,2,1,2,3,3,1])
-    maze.append([2,3,1,3,1,2,1,3,2,1,0])
-
-    return maze
-
-def createMaze3():
-    maze = []
-    maze.append([0, 4, 1, 3, 2, 3, 1, 3, 1, 2, 2])
-    maze.append([4, 2, 3, 2, 1, 2, 1, 2, 1, 1, 3])
-    maze.append([1, 1, 2, 3, 1, 2, 1, 3, 3, 1, 2])
-    maze.append([2, 1, 3, 1, 2, 3, 1, 3, 1, 3, 1])
-    maze.append([2, 2, 3, 1, 2, 1, 2, 3, 1, 1, 2])
-    maze.append([2, 1, 3, 1, 3, 2, 2, 3, 1, 3, 1])
-    maze.append([2, 1, 3, 1, 2, 1, 1, 2, 3, 3, 3])
-    maze.append([1, 2, 3, 1, 1, 1, 3, 1, 2, 1, 3])
-    maze.append([3, 2, 1, 2, 3, 1, 3, 1, 3, 2, 1])
-    maze.append([1, 2, 3, 1, 2, 3, 3, 2, 1, 2, 3])
-    maze.append([2, 3, 1, 3, 2, 3, 3, 2, 1, 2, 0])
-
-    return maze
-
-def createMaze4():
-    maze=[]
-    maze.append([0, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-    maze.append([4, 1, 1, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0])
-
-    return maze
-
-def createMaze5():
-    maze=[]
-    maze.append([0, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 4, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1])
-    maze.append([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0])
-
-    return maze
 
 #the function sums the minimum cost path for the first row
 def sumCostPathRow(list1,list2):
@@ -247,7 +169,6 @@ def findPreviousTile(list1, list2, indexJ, indexI):
 def findPaths(list1, list2, indexJ, indexI):
     pathList=[] # a list where the coordinates are stored will be initialised
     while indexJ!=0 or indexI!=0: #if the coordinates don't indicate the start point
-
         pathList.append([indexJ, indexI]) #append the coordinates to the list
         if checkTeleportTile(list2, indexJ, indexI): #if theres a teleport tile
             (indexJ,indexI)=checkTeleportTile(list2,indexJ,indexI) #the coordinates are changed
@@ -263,7 +184,7 @@ def findPaths(list1, list2, indexJ, indexI):
 tpCoords=[] #this is where the coordinates of the tps will be stored
 pathsCoordinates=[] #this is where the coordinates of the alternate paths will be stored
 mazePath=[] #this is where the main path will be stored
-theMaze=createMaze() #this is the initialisation of the maze map
+theMaze=mazesData.createMaze() #this is the initialisation of the maze map
 minPathCost=list(np.zeros((11,11))) #this is the initialisation of the lists where min cost paths for every tile will be stored
 
 leastCostPath(minPathCost, theMaze) #the value of the least cost path is calculated
